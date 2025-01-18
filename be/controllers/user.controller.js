@@ -34,8 +34,10 @@ const userController = {
             if (!validator.isEmail(email)) {
                 return res.status(400).json({ message: 'Email is not valid' });
             }
-            const { token } = await userServices.login({ email, password });
-            res.status(200).json({ token });
+            
+            await userServices.login({ email, password });
+            res.status(200).json({ message: 'Login success' });
+
         } catch (error) {
             res.status(500).json({ message: error.message });
         }

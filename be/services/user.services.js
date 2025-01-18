@@ -1,6 +1,9 @@
-const Users = require('../models/users.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+const Users = require('../models/users.model');
+const redisClient = require('../helpers/configRedis.helper');
+
 const { JWT_SECRET } = process.env;
 
 const userServices = {
@@ -24,7 +27,10 @@ const userServices = {
         if (!validPassword) throw new Error('Password is not valid');
 
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        return { token };
+        
+        if(!await redisClient.set(`token:${user._id}`, token, 'EX', 3600)){
+            throw new Error('Failed to save token to redis');
+        }
     },
     
     resetPassword: async ({email, password}) => {
