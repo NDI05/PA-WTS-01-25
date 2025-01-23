@@ -1,20 +1,16 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-const Users = require('../models/users.model');
-const redisClient = require('../helpers/configRedis.helper');
-
-const { JWT_SECRET } = process.env;
+const Users = require('../models/users/users.model');
 
 const userServices = {
-    register: async ({fullName, email, password}) => {
+    register: async ({fullName, email, password, role}) => {
         if (await Users.findOne({ email })) throw new Error('Email is already taken'); 
 
         const hash = await bcrypt.hash(password, 10);
         const newUser = new Users({
             fullName,
             email,
-            password: hash
+            password: hash,
+            role
         });
         await newUser.save();
     },
@@ -26,11 +22,7 @@ const userServices = {
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) throw new Error('Password is not valid');
 
-        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        
-        if(!await redisClient.set(`token:${user._id}`, token, 'EX', 3600)){
-            throw new Error('Failed to save token to redis');
-        }
+        return user;
     },
     
     resetPassword: async ({email, password}) => {
@@ -40,6 +32,12 @@ const userServices = {
         }, {
             password: hash
         });
+    },
+
+    getUser: async ({_id}) => {
+        const user = await Users.findOne({_id});
+        if (!user) throw new Error('User is not found');
+        return user;
     }
 }
 

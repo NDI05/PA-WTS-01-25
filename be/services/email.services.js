@@ -1,5 +1,5 @@
 const configMailer = require('../helpers/configMailer.helper');
-const Users = require('../models/users.model');
+const Users = require('../models/users/users.model');
 
 const emailService = {
     sendEmail: async ({email, subject, text, html}) => {

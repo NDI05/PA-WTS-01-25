@@ -1,14 +1,16 @@
 const userServices = require('../services/user.services');
 const emailServices = require('../services/email.services');
+const redisClient = require('../helpers/configRedis.helper');
 
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = process.env;
 const validator = require('validator');
 
 const userController = {
     register: async (req, res) => {
         try {
-            const { fullName, email, password } = req.body;
-            if (!fullName || !email || !password) {
+            const { fullName, email, password, role } = req.body;
+            if (!fullName || !email || !password || !role) {
                 return res.status(400).json({ message: 'Please fill in all fields' });
             }
             
@@ -19,7 +21,9 @@ const userController = {
             if (password.length < 6) {
                 return res.status(400).json({ message: 'Password must be at least 6 characters' });
             }
-            await userServices.register({ fullName, email, password });
+            await userServices.register({ fullName, email, password, user });
+
+            res.status(200).json({ message: 'Register success' });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -35,7 +39,14 @@ const userController = {
                 return res.status(400).json({ message: 'Email is not valid' });
             }
             
-            await userServices.login({ email, password });
+            const user = await userServices.login({ email, password });
+
+            const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
+
+            if(!await redisClient.set(`token:${user._id}`, token, 'EX', 3600)){
+                throw new Error('Failed to save token to redis');
+            }
+            res.setHeader('Authorization',  `Bearer ${token}`);
             res.status(200).json({ message: 'Login success' });
 
         } catch (error) {
@@ -80,6 +91,15 @@ const userController = {
             const { email } = jwt.verify(token, process.env.JWT_SECRET);
             await userServices.resetPassword({ email, password });
             res.status(200).json({ message: 'Password has been reset' });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+    getUser: async (req, res) => {
+        try {
+            const _id = req.user;
+            const users = await userServices.getUser({_id});
+            res.status(200).json({ users });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
