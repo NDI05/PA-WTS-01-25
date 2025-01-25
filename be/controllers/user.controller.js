@@ -9,9 +9,21 @@ const validator = require('validator');
 const userController = {
     register: async (req, res) => {
         try {
-            const { fullName, email, password, role } = req.body;
+            const { fullName, email, password, role, departement, nameCompany } = req.body;
             if (!fullName || !email || !password || !role) {
                 return res.status(400).json({ message: 'Please fill in all fields' });
+            }
+            
+            if (role !== "officer" && role !== "enterpreneur") {
+                return res.status(400).json({ message: 'Role is not valid' });
+            }
+
+            if (role === "officer" && !departement) {
+                return res.status(400).json({ message: 'Departement is required' });
+            }
+
+            if (role === "enterpreneur" && !nameCompany) {
+                return res.status(400).json({ message: 'Name Company is required' });
             }
             
             if (!validator.isEmail(email)) {
@@ -21,7 +33,7 @@ const userController = {
             if (password.length < 6) {
                 return res.status(400).json({ message: 'Password must be at least 6 characters' });
             }
-            await userServices.register({ fullName, email, password, user });
+            await userServices.register({ fullName, email, password, role, nameCompany, departement });
 
             res.status(200).json({ message: 'Register success' });
         } catch (error) {

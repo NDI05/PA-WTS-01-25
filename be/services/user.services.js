@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
 const Users = require('../models/users/users.model');
+const DetailOfficer = require('../models/users/detailOfficer.model');
+const DetailEnterpreneur = require('../models/users/detailEntrepreneur.model');
 
 const userServices = {
-    register: async ({fullName, email, password, role}) => {
+    register: async ({fullName, email, password, role, nameCompany, departement}) => {
         if (await Users.findOne({ email })) throw new Error('Email is already taken'); 
 
         const hash = await bcrypt.hash(password, 10);
@@ -13,6 +15,20 @@ const userServices = {
             role
         });
         await newUser.save();
+
+        if (role === 'officer') {
+            const newOfficer = new DetailOfficer({
+                idUser: newUser._id,
+                departement
+            });
+            await newOfficer.save();
+        }else{
+            const newEnterpreneur = new DetailEnterpreneur({
+                idUser: newUser._id,
+                nameCompany
+            });
+            await newEnterpreneur.save();
+        }
     },
 
     login: async ({email, password}) => {
