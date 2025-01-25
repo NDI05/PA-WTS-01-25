@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const productSchema = new Schema({
-    idBom: {
+const detailWopSchema = new Schema({
+    idWop: {
         type: String,
         required: true
     },
-    idStation: {
+    nameDetailWop: {
         type: String,
         required: true
     },
-    productName: {
+    description: {
         type: String,
         required: true
     },
-    createdBy: {
+    documentation: {
         type: String,
-        required: true
-    }
+        default: 'none'
+    },
 })
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model('DetailWop', detailWopSchema);

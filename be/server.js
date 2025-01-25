@@ -12,6 +12,8 @@ app.use(express.json());
 
 app.use('/api/users', require('./routers/user.router'));
 app.use('/api/boms', require('./routers/bom.router'));
+app.use('/api/emails', require('./routers/email.router'));
+app.use('/api/companys', require('./routers/company.router'));
 
 app.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`);

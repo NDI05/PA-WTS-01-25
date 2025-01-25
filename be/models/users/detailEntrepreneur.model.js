@@ -6,7 +6,7 @@ const detailEntrepreneurSchema = new Schema({
         type: String,
         required: true
     },
-    nameCompany: {
+    idCompany: {
         type: String,
         required: true
     }

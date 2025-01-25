@@ -16,39 +16,13 @@ const bomController ={
     },
     getBom: async (req, res) => {
         try {
-            const bom = await bomService.getBom();
-            res.status(200).json(bom);
+            const _id = req.user;
+            const boms = await bomService.getBom(_id);
+            res.status(200).json(boms);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
-    getDetailBom: async (req, res) => {
-        try {
-            const idBom = req.params.idBom;
-            const detailBom = await bomService.getDetailBom(idBom);
-            res.status(200).json(detailBom);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    },
-    updateBom: async (req, res) => {
-        try {
-            const { idBom, bomName, createdBy, detailBom } = req.body;
-            const bom = await bomService.updateBom({ idBom, bomName, createdBy, detailBom });
-            res.status(200).json(bom);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    },
-    deleteBom: async (req, res) => {
-        try {
-            const idBom = req.params.idBom;
-            await bomService.deleteBom(idBom);
-            res.status(200).json({ message: 'Bom deleted' });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    }
 }
 
 module.exports = bomController;

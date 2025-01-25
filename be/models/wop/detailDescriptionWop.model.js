@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const detailBomSchema = new Schema({
-    idBomSchema: {
+const detailDescriptionWopSchema = new Schema({
+    idDetailWop: {
+        type: String,
+        required: true
+    },
+    idDetailBom: {
         type: String,
         required: true
     },
@@ -16,4 +20,4 @@ const detailBomSchema = new Schema({
     },
 })
 
-module.exports = mongoose.model('DetailBom', detailBomSchema);
+module.exports = mongoose.model('DetailDescriptionWop', detailDescriptionWopSchema);

@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const bomSchema = new Schema({
-    bomName: {
+const companySchema = new Schema({
+    nib:{
         type: String,
         required: true
     },
-    createdBy: {
+    nameCompany: {
         type: String,
         required: true
     },
-    idCompany: {
+    createdBy:{
         type: String,
-        required: true
+        require: true
     }
 })
 
-module.exports = mongoose.model('Bom', bomSchema);
+module.exports = mongoose.model('Company', companySchema);
