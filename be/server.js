@@ -5,7 +5,9 @@ const app = express();
 const { PORT } = process.env;
 
 const connectionDB = require('./helpers/connectionDB.helper');
+const { ObjectId } = require('mongodb');
 
+global.ObjectId = ObjectId;
 connectionDB();
 
 app.use(express.json());

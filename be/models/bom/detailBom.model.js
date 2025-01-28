@@ -6,6 +6,10 @@ const detailBomSchema = new Schema({
         type: String,
         required: true
     },
+    materialName:{
+        type: String,
+        required: true
+    },
     quantity: {
         type: Number,
         required: true

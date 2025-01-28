@@ -55,7 +55,7 @@ const userController = {
 
             const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
 
-            if(!await redisClient.set(`token:${user._id}`, token, 'EX', 3600)){
+            if(!await redisClient.setEx(`token:${user._id}`, 3600, token )){
                 throw new Error('Failed to save token to redis');
             }
             res.setHeader('Authorization',  `Bearer ${token}`);

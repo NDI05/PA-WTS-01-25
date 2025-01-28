@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const bomSchema = new Schema({
+    idBom: {
+        type: String,
+        required: true
+    },
     bomName: {
         type: String,
         required: true
@@ -9,6 +13,10 @@ const bomSchema = new Schema({
     createdBy: {
         type: String,
         required: true
+    },
+    status:{
+        type: Boolean,
+        default: false
     },
     idCompany: {
         type: String,
